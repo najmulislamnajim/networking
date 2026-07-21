@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>নেটওয়ার্কিং — শূন্য থেকে শুরু</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12100e;
+    --paper:#f6f2e9;
+    --paper2:#efe9db;
+    --line:#d8cfba;
+    --accent:#1a6b5a;      /* deep teal — cables/signal */
+    --accent2:#c25a2e;      /* rust — for warnings/highlights */
+    --wire:#2b7a6a;
+    --muted:#6b6355;
+    --code-bg:#1c1a17;
+    --code-ink:#e8e2d4;
+    --sky:#2d6aa8;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Hind Siliguri',sans-serif;
+    font-size:18px;
+    line-height:1.85;
+  }
+  code,pre,.mono{font-family:'JetBrains Mono',monospace}
+
+  /* Layout */
+  .wrap{display:flex;min-height:100vh}
+  aside{
+    width:290px;
+    flex-shrink:0;
+    background:var(--paper2);
+    border-right:1px solid var(--line);
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+    padding:28px 22px;
+  }
+  main{flex:1;max-width:860px;margin:0 auto;padding:56px 48px 120px}
+
+  aside .brand{font-weight:700;font-size:1.15rem;line-height:1.4;color:var(--accent);margin-bottom:4px}
+  aside .brand small{display:block;font-weight:400;font-size:.72rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:6px}
+  aside nav{margin-top:26px}
+  aside nav a{
+    display:block;
+    text-decoration:none;
+    color:var(--ink);
+    padding:7px 12px;
+    border-radius:7px;
+    font-size:.94rem;
+    margin-bottom:2px;
+    transition:background .15s,color .15s;
+  }
+  aside nav a .n{color:var(--accent);font-weight:600;font-family:'JetBrains Mono';font-size:.8rem;margin-right:8px}
+  aside nav a:hover{background:var(--paper)}
+  aside nav a.active{background:var(--accent);color:#fff}
+  aside nav a.active .n{color:#cfeee6}
+
+  /* Hero */
+  .hero{border-bottom:2px solid var(--ink);padding-bottom:34px;margin-bottom:50px}
+  .hero .eyebrow{font-family:'JetBrains Mono';font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent2);margin-bottom:18px}
+  .hero h1{font-size:3.1rem;line-height:1.08;margin:0 0 18px;font-weight:700;letter-spacing:-.5px}
+  .hero p{font-size:1.15rem;color:var(--muted);max-width:60ch;margin:0}
+
+  /* Chapters */
+  section.chapter{margin-bottom:80px;scroll-margin-top:24px}
+  .ch-head{display:flex;align-items:baseline;gap:16px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:30px}
+  .ch-head .ch-num{font-family:'JetBrains Mono';font-size:2.4rem;font-weight:600;color:var(--accent);line-height:1}
+  .ch-head h2{font-size:1.9rem;margin:0;font-weight:700;letter-spacing:-.3px}
+  .ch-head .ch-sub{font-size:.85rem;color:var(--muted);font-family:'JetBrains Mono';letter-spacing:.05em}
+
+  h3{font-size:1.32rem;margin:38px 0 14px;font-weight:600;color:var(--ink)}
+  h4{font-size:1.08rem;margin:26px 0 10px;font-weight:600;color:var(--accent)}
+  p{margin:14px 0}
+  strong{font-weight:600;color:var(--ink)}
+  .lead{font-size:1.08rem}
+
+  /* Callouts */
+  .box{border-radius:12px;padding:18px 22px;margin:24px 0;font-size:.98rem;line-height:1.75}
+  .analogy{background:#fff6e9;border:1px solid #e8cfa0}
+  .analogy .tag{font-weight:700;color:var(--accent2);font-size:.82rem;letter-spacing:.05em;display:block;margin-bottom:6px}
+  .note{background:#eaf3f0;border:1px solid #b8d8ce}
+  .note .tag{font-weight:700;color:var(--accent);font-size:.82rem;display:block;margin-bottom:6px}
+  .warn{background:#fdeee6;border:1px solid #edbfa4}
+  .warn .tag{font-weight:700;color:var(--accent2);font-size:.82rem;display:block;margin-bottom:6px}
+
+  /* Code */
+  pre{background:var(--code-bg);color:var(--code-ink);border-radius:10px;padding:18px 20px;overflow-x:auto;font-size:.86rem;line-height:1.7;margin:20px 0}
+  pre .c{color:#8a9b8f}
+  pre .k{color:#7fd6bd}
+  pre .o{color:#e8a87c}
+  p code,li code{background:var(--paper2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:.85em;color:var(--accent2)}
+
+  /* Tables */
+  table{width:100%;border-collapse:collapse;margin:24px 0;font-size:.92rem}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+  th{background:var(--paper2);font-weight:600;font-size:.85rem;letter-spacing:.03em}
+  tr:hover td{background:#fff8ef}
+
+  /* Diagram frame */
+  figure{margin:30px 0}
+  .diagram{background:#fffdf8;border:1px solid var(--line);border-radius:14px;padding:24px;text-align:center}
+  figcaption{font-size:.85rem;color:var(--muted);text-align:center;margin-top:12px;font-style:italic}
+  svg{max-width:100%;height:auto}
+
+  ul,ol{padding-left:24px}
+  li{margin:8px 0}
+
+  .quiz{background:var(--paper2);border:1px dashed var(--accent);border-radius:12px;padding:20px 24px;margin:28px 0}
+  .quiz .tag{font-weight:700;color:var(--accent);display:block;margin-bottom:10px;font-size:.9rem}
+  .quiz details{margin:10px 0}
+  .quiz summary{cursor:pointer;font-weight:500}
+  .quiz details p{margin:8px 0 0;color:var(--muted);font-size:.95rem}
+
+  .toc-hint{color:var(--muted);font-size:.8rem;margin-top:30px;border-top:1px solid var(--line);padding-top:16px}
+
+  @media(max-width:900px){
+    aside{display:none}
+    main{padding:32px 22px 90px}
+    .hero h1{font-size:2.2rem}
+    body{font-size:17px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<aside>
+  <div class="brand">নেটওয়ার্কিং<small>শূন্য থেকে শুরু</small></div>
+  <nav id="toc">
+    <a href="#ch0"><span class="n">০০</span>ভূমিকা</a>
+    <a href="#ch1"><span class="n">০১</span>নেটওয়ার্ক কী?</a>
+    <a href="#ch2"><span class="n">০২</span>IP অ্যাড্রেস ও ঠিকানা</a>
+    <a href="#ch3"><span class="n">০৩</span>OSI ও TCP/IP মডেল</a>
+    <a href="#ch4"><span class="n">০৪</span>ডেটা কীভাবে যায়</a>
+    <a href="#ch5"><span class="n">০৫</span>ডিভাইস: রাউটার, সুইচ</a>
+    <a href="#ch6"><span class="n">০৬</span>DNS, DHCP, NAT</a>
+    <a href="#ch7"><span class="n">০৭</span>প্র্যাকটিক্যাল: কমান্ড</a>
+    <a href="#ch8"><span class="n">০৮</span>সাবনেটিং হাতে-কলমে</a>
+  </nav>
+  <div class="toc-hint">প্রতিটি অধ্যায়ে ব্যাখ্যা, ডায়াগ্রাম, উদাহরণ ও ছোট কুইজ আছে। ধীরে ধীরে পড়ুন।</div>
+</aside>
+
+<main>
+  <div class="hero">
+    <div class="eyebrow">বাংলা · হাতে-কলমে গাইড</div>
+    <h1>নেটওয়ার্কিং শেখা,<br>একদম শুরু থেকে</h1>
+    <p>কম্পিউটার একে অপরের সাথে কীভাবে কথা বলে? এই বইটি সেই গল্পটাই বলে — সহজ উপমা, ছবি আর বাস্তব উদাহরণ দিয়ে। কোনো আগের জ্ঞান লাগবে না।</p>
+  </div>
+
+  <!-- ============ CH0 ============ -->
+  <section class="chapter" id="ch0">
+    <div class="ch-head">
+      <span class="ch-num">০০</span>
+      <div><h2>এই বই কীভাবে পড়বেন</h2><div class="ch-sub">how-to-read</div></div>
+    </div>
+    <p class="lead">নেটওয়ার্কিং শুনতে জটিল লাগে, কিন্তু আসলে এটা একটা সহজ প্রশ্নের উত্তর — <strong>"দুটো কম্পিউটার কীভাবে একে অপরকে খুঁজে পায় আর তথ্য পাঠায়?"</strong></p>
+    <p>আমরা পুরো বইটা সাজিয়েছি একটা গল্পের মতো। প্রথমে বুঝবো নেটওয়ার্ক জিনিসটা কী, তারপর ঠিকানা (IP), তারপর নিয়ম-কানুন (protocol), তারপর যন্ত্রপাতি (router, switch), আর শেষে নিজে হাতে কমান্ড চালিয়ে দেখবো।</p>
+    <div class="box note"><span class="tag">📌 পড়ার নিয়ম</span>
+    প্রতিটি অধ্যায়ে তিনটা জিনিস আছে — <strong>উপমা</strong> (দৈনন্দিন জীবনের সাথে মিল), <strong>ব্যাখ্যা</strong> (আসল ব্যাপারটা), আর <strong>উদাহরণ/কমান্ড</strong> (হাতে-কলমে)। তাড়াহুড়ো করবেন না, প্রতিটা ডায়াগ্রাম মন দিয়ে দেখুন।</div>
+
+    <figure><div class="diagram">
+      <svg viewBox="0 0 720 130" xmlns="http://www.w3.org/2000/svg" font-family="Hind Siliguri, sans-serif">
+        <defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#1a6b5a"/></marker></defs>
+        <!-- steps -->
+        <g>
+          <rect x="10" y="40" width="120" height="50" rx="10" fill="#eaf3f0" stroke="#1a6b5a"/>
+          <text x="70" y="63" text-anchor="middle" font-size="14" font-weight="600">নেটওয়ার্ক</text>
+          <text x="70" y="80" text-anchor="middle" font-size="11" fill="#6b6355">কী?</text>
+        </g>
+        <line x1="132" y1="65" x2="168" y2="65" stroke="#1a6b5a" stroke-width="2" marker-end="url(#ar)"/>
+        <g>
+          <rect x="170" y="40" width="120" height="50" rx="10" fill="#eaf3f0" stroke="#1a6b5a"/>
+          <text x="230" y="63" text-anchor="middle" font-size="14" font-weight="600">ঠিকানা</text>
+          <text x="230" y="80" text-anchor="middle" font-size="11" fill="#6b6355">IP</text>
+        </g>
+        <line x1="292" y1="65" x2="328" y2="65" stroke="#1a6b5a" stroke-width="2" marker-end="url(#ar)"/>
+        <g>
+          <rect x="330" y="40" width="120" height="50" rx="10" fill="#eaf3f0" stroke="#1a6b5a"/>
+          <text x="390" y="63" text-anchor="middle" font-size="14" font-weight="600">নিয়ম</text>
+          <text x="390" y="80" text-anchor="middle" font-size="11" fill="#6b6355">protocol</text>
+        </g>
+        <line x1="452" y1="65" x2="488" y2="65" stroke="#1a6b5a" stroke-width="2" marker-end="url(#ar)"/>
+        <g>
+          <rect x="490" y="40" width="120" height="50" rx="10" fill="#eaf3f0" stroke="#1a6b5a"/>
+          <text x="550" y="63" text-anchor="middle" font-size="14" font-weight="600">যন্ত্রপাতি</text>
+          <text x="550" y="80" text-anchor="middle" font-size="11" fill="#6b6355">router/switch</text>
+        </g>
+        <line x1="612" y1="65" x2="648" y2="65" stroke="#1a6b5a" stroke-width="2" marker-end="url(#ar)"/>
+        <g>
+          <rect x="650" y="40" width="60" height="50" rx="10" fill="#c25a2e" stroke="#c25a2e"/>
+          <text x="680" y="70" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">হাতে</text>
+        </g>
+      </svg>
+    </div><figcaption>বইয়ের পথচলা — সহজ থেকে জটিলের দিকে</figcaption></figure>
+  </section>
+
+  <!-- ============ CH1 ============ -->
+  <section class="chapter" id="ch1">
+    <div class="ch-head">
+      <span class="ch-num">০১</span>
+      <div><h2>নেটওয়ার্ক আসলে কী?</h2><div class="ch-sub">what-is-a-network</div></div>
+    </div>
+
+    <p class="lead"><strong>নেটওয়ার্ক</strong> মানে হলো — দুই বা ততোধিক কম্পিউটার (বা ডিভাইস) একে অপরের সাথে যুক্ত হয়ে তথ্য আদান-প্রদান করছে। ব্যস, এতটুকুই।</p>
+
+    <div class="box analogy"><span class="tag">🏘️ উপমা — পাড়ার মানুষজন</span>
+    ধরুন আপনার পাড়ায় অনেকগুলো বাড়ি। প্রতিটা বাড়ির একটা <strong>ঠিকানা</strong> আছে। একজন আরেকজনকে চিঠি পাঠাতে চাইলে ঠিকানা লিখে, ডাকপিয়নের হাতে দেয়, আর ডাকপিয়ন সেটা সঠিক বাড়িতে পৌঁছে দেয়। নেটওয়ার্কও ঠিক এভাবেই কাজ করে — কম্পিউটার হলো বাড়ি, IP অ্যাড্রেস হলো ঠিকানা, আর রাউটার হলো ডাকপিয়ন।</div>
+
+    <h3>কেন নেটওয়ার্ক দরকার?</h3>
+    <p>আপনি যখন ইউটিউব খোলেন, তখন আপনার ফোন আসলে হাজার মাইল দূরে থাকা গুগলের একটা কম্পিউটার (সার্ভার) থেকে ভিডিও চেয়ে আনে। এই "চাওয়া" আর "পাওয়া"-র পুরো ব্যবস্থাটাই নেটওয়ার্ক। এর মূল কাজগুলো হলো: তথ্য শেয়ার করা, রিসোর্স (যেমন প্রিন্টার) ভাগ করা, আর যোগাযোগ করা।</p>
+
+    <h3>নেটওয়ার্কের আকার — LAN, WAN</h3>
+    <p>নেটওয়ার্ক ছোট-বড় নানা আকারের হয়। আকার অনুযায়ী তাদের নাম আলাদা:</p>
+
+    <table>
+      <tr><th>নাম</th><th>পূর্ণরূপ</th><th>এলাকা</th><th>উদাহরণ</th></tr>
+      <tr><td><strong>LAN</strong></td><td>Local Area Network</td><td>একটা ঘর/বিল্ডিং</td><td>আপনার বাসার Wi-Fi</td></tr>
+      <tr><td><strong>WAN</strong></td><td>Wide Area Network</td><td>শহর/দেশ/পৃথিবী</td><td>ইন্টারনেট নিজেই</td></tr>
+      <tr><td><strong>MAN</strong></td><td>Metropolitan A.N.</td><td>একটা শহর</td><td>শহরের কেবল অপারেটর</td></tr>
+      <tr><td><strong>PAN</strong></td><td>Personal A.N.</td><td>আপনার শরীরের কাছে</td><td>ফোন ↔ ব্লুটুথ ইয়ারফোন</td></tr>
+    </table>
+
+    <figure><div class="diagram">
+      <svg viewBox="0 0 640 300" xmlns="http://www.w3.org/2000/svg" font-family="Hind Siliguri, sans-serif">
+        <!-- LAN cloud -->
+        <rect x="20" y="30" width="260" height="240" rx="16" fill="#eaf3f0" stroke="#1a6b5a" stroke-dasharray="6 4"/>
+        <text x="150" y="55" text-anchor="middle" font-size="15" font-weight="700" fill="#1a6b5a">আপনার বাসা (LAN)</text>
+        <!-- router -->
+        <rect x="115" y="80" width="70" height="34" rx="6" fill="#fff" stroke="#1a6b5a"/>
+        <text x="150" y="102" text-anchor="middle" font-size="12" font-weight="600">রাউটার</text>
+        <!-- devices -->
+        <g font-size="11" text-anchor="middle">
+          <rect x="40" y="180" width="60" height="40" rx="6" fill="#fff" stroke="#6b6355"/><text x="70" y="204">ল্যাপটপ</text>
+          <rect x="120" y="180" width="60" height="40" rx="6" fill="#fff" stroke="#6b6355"/><text x="150" y="204">ফোন</text>
+          <rect x="200" y="180" width="60" height="40" rx="6" fill="#fff" stroke="#6b6355"/><text x="230" y="204">টিভি</text>
+        </g>
+        <line x1="150" y1="114" x2="70" y2="180" stroke="#2b7a6a" stroke-width="1.5"/>
+        <line x1="150" y1="114" x2="150" y2="180" stroke="#2b7a6a" stroke-width="1.5"/>
+        <line x1="150" y1="114" x2="230" y2="180" stroke="#2b7a6a" stroke-width="1.5"/>
+        <!-- WAN -->
+        <line x1="185" y1="97" x2="340" y2="97" stroke="#c25a2e" stroke-width="2"/>
+        <ellipse cx="470" cy="150" rx="140" ry="90" fill="#fdeee6" stroke="#c25a2e" stroke-dasharray="6 4"/>
+        <text x="470" y="120" text-anchor="middle" font-size="15" font-weight="700" fill="#c25a2e">ইন্টারনেট (WAN)</text>
+        <g font-size="11" text-anchor="middle">
+          <rect x="400" y="145" width="60" height="36" rx="6" fill="#fff" stroke="#c25a2e"/><text x="430" y="167">গুগল</text>
+          <rect x="480" y="145" width="60" height="36" rx="6" fill="#fff" stroke="#c25a2e"/><text x="510" y="167">ইউটিউব</text>
+        </g>
+        <text x="340" y="90" font-size="11" fill="#c25a2e">ISP</text>
+      </svg>
+    </div><figcaption>বাসার ছোট নেটওয়ার্ক (LAN) ISP-এর মাধ্যমে বিশাল ইন্টারনেটের (WAN) সাথে যুক্ত</figcaption></figure>
+
+    <div class="quiz"><span class="tag">🧠 নিজেকে যাচাই করুন</span>
+    <details><summary>আপনার বাসার Wi-Fi কোন ধরনের নেটওয়ার্ক?</summary><p>LAN — Local Area Network। এটা একটা সীমিত এলাকার (আপনার বাসা) মধ্যে ডিভাইসগুলোকে যুক্ত করে।</p></details>
+    <details><summary>ইন্টারনেট আসলে কী?</summary><p>ইন্টারনেট হলো পৃথিবীজুড়ে লাখ লাখ ছোট নেটওয়ার্কের একটা বিশাল সংযোগ — অর্থাৎ "নেটওয়ার্কের নেটওয়ার্ক"। এটাই সবচেয়ে বড় WAN।</p></details>
+    </div>
+  </section>
+
+  <!-- ============ CH2 ============ -->
+  <section class="chapter" id="ch2">
+    <div class="ch-head">
+      <span class="ch-num">০২</span>
+      <div><h2>IP অ্যাড্রেস — ডিজিটাল ঠিকানা</h2><div class="ch-sub">ip-addressing</div></div>
+    </div>
+
+    <p class="lead">প্রতিটা ডিভাইসের একটা করে ঠিকানা দরকার, নাহলে তথ্য কোথায় যাবে বোঝা যাবে না। এই ঠিকানার নাম <strong>IP Address</strong> (Internet Protocol Address)।</p>
+
+    <div class="box analogy"><span class="tag">✉️ উপমা — বাড়ির ঠিকানা</span>
+    "১২ নম্বর সড়ক, ধানমন্ডি, ঢাকা" — যেমন একটা নির্দিষ্ট বাড়ি বোঝায়, তেমনি <code>192.168.1.10</code> একটা নির্দিষ্ট কম্পিউটার বোঝায়। প্রতিটা অংশের মানে আছে — কোন এলাকা, কোন সড়ক, কত নম্বর বাড়ি।</div>
+
+    <h3>IPv4 — চারটা সংখ্যার ঠিকানা</h3>
+    <p>সবচেয়ে প্রচলিত হলো IPv4। এটা দেখতে এমন: <code>192.168.1.10</code>। চারটা সংখ্যা, ডট দিয়ে আলাদা। প্রতিটা সংখ্যা <strong>০ থেকে ২৫৫</strong> পর্যন্ত হতে পারে। প্রতিটা অংশকে বলে <strong>octet</strong> (কারণ কম্পিউটারের ভাষায় এটা ৮টা বিট)।</p>
+
+    <figure><div class="diagram">
+      <svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg" font-family="JetBrains Mono, monospace">
+        <g text-anchor="middle">
+          <rect x="60" y="60" width="110" height="55" rx="8" fill="#eaf3f0" stroke="#1a6b5a"/>
+          <text x="115" y="95" font-size="26" font-weight="600" fill="#1a6b5a">192</text>
+          <text x="185" y="95" font-size="26" fill="#6b6355">.</text>
+          <rect x="200" y="60" width="110" height="55" rx="8" fill="#eaf3f0" stroke="#1a6b5a"/>
+          <text x="255" y="95" font-size="26" font-weight="600" fill="#1a6b5a">168</text>
+          <text x="325" y="95" font-size="26" fill="#6b6355">.</text>
+          <rect x="340" y="60" width="90" height="55" rx="8" fill="#fdeee6" stroke="#c25a2e"/>
+          <text x="385" y="95" font-size="26" font-weight="600" fill="#c25a2e">1</text>
+          <text x="440" y="95" font-size="26" fill="#6b6355">.</text>
+          <rect x="455" y="60" width="90" height="55" rx="8" fill="#fdeee6" stroke="#c25a2e"/>
+          <text x="500" y="95" font-size="26" font-weight="600" fill="#c25a2e">10</text>
+        </g>
+        <text x="185" y="145" text-anchor="middle" font-size="13" fill="#1a6b5a" font-family="Hind Siliguri">◀ নেটওয়ার্ক অংশ (কোন পাড়া)</text>
+        <text x="500" y="145" text-anchor="middle" font-size="13" fill="#c25a2e" font-family="Hind Siliguri">হোস্ট অংশ (কোন বাড়ি) ▶</text>
+        <text x="300" y="180" text-anchor="middle" font-size="12" fill="#6b6355" font-family="Hind Siliguri">প্রতিটা সংখ্যা = ০–২৫৫ · মোট ৪টা octet</text>
+      </svg>
+    </div><figcaption>একটা IPv4 অ্যাড্রেসের গঠন — কিছু অংশ "পাড়া" আর কিছু অংশ "বাড়ি" চেনায়</figcaption></figure>
+
+    <h3>প্রাইভেট বনাম পাবলিক IP</h3>
+    <p>দুই ধরনের IP আছে। <strong>প্রাইভেট IP</strong> শুধু আপনার বাসার ভেতরে কাজ করে (যেমন ফোন থেকে টিভি), আর <strong>পাবলিক IP</strong> দিয়ে আপনি পুরো ইন্টারনেটে পরিচিত হন।</p>
+
+    <div class="box analogy"><span class="tag">🏢 উপমা — অফিসের এক্সটেনশন নম্বর</span>
+    একটা অফিসের বাইরের নম্বর একটাই (পাবলিক IP)। কিন্তু ভেতরে প্রতিটা ডেস্কের আলাদা এক্সটেনশন (প্রাইভেট IP) — ১০১, ১০২, ১০৩। বাইরের কেউ শুধু মূল নম্বরটা জানে; ভেতরের এক্সটেনশন অফিসের বাইরে অর্থহীন।</div>
+
+    <table>
+      <tr><th>রেঞ্জ</th><th>ধরন</th><th>কোথায়</th></tr>
+      <tr><td><code>10.0.0.0 – 10.255.255.255</code></td><td>প্রাইভেট</td><td>বড় নেটওয়ার্ক</td></tr>
+      <tr><td><code>172.16.0.0 – 172.31.255.255</code></td><td>প্রাইভেট</td><td>মাঝারি</td></tr>
+      <tr><td><code>192.168.0.0 – 192.168.255.255</code></td><td>প্রাইভেট</td><td>বাসা/ছোট অফিস</td></tr>
+      <tr><td>বাকি সব</td><td>পাবলিক</td><td>ইন্টারনেট</td></tr>
+    </table>
+
+    <div class="box note"><span class="tag">💡 জেনে রাখুন — IPv6</span>
+    IPv4-এ মোট ঠিকানা প্রায় ৪৩০ কোটি, যা পৃথিবীর সব ডিভাইসের জন্য কম পড়ে গেছে। তাই এসেছে <strong>IPv6</strong> — দেখতে এমন: <code>2001:0db8:85a3::8a2e:0370:7334</code>। এতে ঠিকানার সংখ্যা এত বেশি যে বালুকণার হিসাবেও কম পড়বে না।</div>
+
+    <div class="quiz"><span class="tag">🧠 নিজেকে যাচাই করুন</span>
+    <details><summary><code>192.168.1.10</code> কি পাবলিক না প্রাইভেট IP?</summary><p>প্রাইভেট। এটা <code>192.168.x.x</code> রেঞ্জে পড়ে, যা বাসা-বাড়ির জন্য সংরক্ষিত।</p></details>
+    <details><summary>একটা octet-এ সর্বোচ্চ কত হতে পারে?</summary><p>২৫৫। কারণ এটা ৮ বিট, আর ৮ বিট দিয়ে ০ থেকে ২৫৫ পর্যন্ত ২৫৬টা মান প্রকাশ করা যায়।</p></details>
+    </div>
+  </section>
+
+  <!-- ============ CH3 ============ -->
+  <section class="chapter" id="ch3">
+    <div class="ch-head">
+      <span class="ch-num">০৩</span>
+      <div><h2>OSI ও TCP/IP মডেল — স্তরের গল্প</h2><div class="ch-sub">layered-models</div></div>
+    </div>
+
+    <p class="lead">তথ্য পাঠানোর কাজটা এত বড় যে একবারে করা যায় না। তাই একে <strong>স্তরে স্তরে</strong> ভাগ করা হয়েছে। প্রতিটা স্তরের নিজের একটা কাজ, আর সে শুধু সেটাই করে।</p>
+
+    <div class="box analogy"><span class="tag">📦 উপমা — কুরিয়ারে পার্সেল পাঠানো</span>
+    আপনি একটা উপহার পাঠাবেন। আপনি শুধু জিনিসটা বাক্সে ভরেন (উপরের স্তর)। কুরিয়ার কোম্পানি সেটা মোড়কে ঢোকায়, ঠিকানার স্টিকার লাগায়, ট্রাকে তোলে, রাস্তা ঠিক করে (নিচের স্তরগুলো)। আপনাকে ট্রাকের ইঞ্জিন বা রাস্তার ম্যাপ নিয়ে ভাবতে হয় না — প্রতিটা স্তর তার কাজ করে দেয়।</div>
+
+    <h3>OSI মডেলের ৭টা স্তর</h3>
+    <p>OSI (Open Systems Interconnection) হলো একটা শিক্ষামূলক মডেল, ৭টা স্তরে ভাগ। উপরের স্তর মানুষের কাছাকাছি, নিচের স্তর তার-কেবলের কাছাকাছি।</p>
+
+    <figure><div class="diagram">
+      <svg viewBox="0 0 660 430" xmlns="http://www.w3.org/2000/svg" font-family="Hind Siliguri, sans-serif">
+        <g font-size="13">
+          <!-- layer 7..1 -->
+          <g>
+            <rect x="120" y="20" width="420" height="46" rx="7" fill="#fdeee6" stroke="#c25a2e"/>
+            <text x="140" y="48" font-weight="700" font-family="JetBrains Mono" fill="#c25a2e">7</text>
+            <text x="175" y="41" font-weight="600">Application — অ্যাপ্লিকেশন</text>
+            <text x="175" y="58" font-size="11" fill="#6b6355">ব্রাউজার, ইমেইল · যা আপনি দেখেন (HTTP)</text>
+          </g>
+          <g>
+            <rect x="120" y="72" width="420" height="46" rx="7" fill="#fdeee6" stroke="#c25a2e"/>
+            <text x="140" y="100" font-weight="700" font-family="JetBrains Mono" fill="#c25a2e">6</text>
+            <text x="175" y="93" font-weight="600">Presentation — উপস্থাপন</text>
+            <text x="175" y="110" font-size="11" fill="#6b6355">এনক্রিপশন, ফরম্যাট (SSL, JPEG)</text>
+          </g>
+          <g>
+            <rect x="120" y="124" width="420" height="46" rx="7" fill="#fdeee6" stroke="#c25a2e"/>
+            <text x="140" y="152" font-weight="700" font-family="JetBrains Mono" fill="#c25a2e">5</text>
+            <text x="175" y="145" font-weight="600">Session — সেশন</text>
+            <text x="175" y="162" font-size="11" fill="#6b6355">সংযোগ চালু/বন্ধ রাখা</text>
+          </g>
+          <g>
+            <rect x="120" y="176" width="420" height="46" rx="7" fill="#eef3ea" stroke="#5a8a3a"/>
+            <text x="140" y="204" font-weight="700" font-family="JetBrains Mono" fill="#5a8a3a">4</text>
+            <text x="175" y="197" font-weight="600">Transport — পরিবহন</text>
+            <text x="175" y="214" font-size="11" fill="#6b6355">নির্ভরযোগ্যতা, টুকরো জোড়া (TCP, UDP)</text>
+          </g>
+          <g>
+            <rect x="120" y="228" width="420" height="46" rx="7" fill="#eaf3f0" stroke="#1a6b5a"/>
+            <text x="140" y="256" font-weight="700" font-family="JetBrains Mono" fill="#1a6b5a">3</text>
+            <text x="175" y="249" font-weight="600">Network — নেটওয়ার্ক</text>
+            <text x="175" y="266" font-size="11" fill="#6b6355">পথ ঠিক করা, IP অ্যাড্রেস (Router)</text>
+          </g>
+          <g>
+            <rect x="120" y="280" width="420" height="46" rx="7" fill="#eaf3f0" stroke="#1a6b5a"/>
+            <text x="140" y="308" font-weight="700" font-family="JetBrains Mono" fill="#1a6b5a">2</text>
+            <text x="175" y="301" font-weight="600">Data Link — ডেটা লিংক</text>
+            <text x="175" y="318" font-size="11" fill="#6b6355">MAC অ্যাড্রেস (Switch)</text>
+          </g>
+          <g>
+            <rect x="120" y="332" width="420" height="46" rx="7" fill="#e8eef2" stroke="#2d6aa8"/>
+            <text x="140" y="360" font-weight="700" font-family="JetBrains Mono" fill="#2d6aa8">1</text>
+            <text x="175" y="353" font-weight="600">Physical — ভৌত</text>
+            <text x="175" y="370" font-size="11" fill="#6b6355">তার, সিগন্যাল, Wi-Fi তরঙ্গ</text>
+          </g>
+        </g>
+        <text x="70" y="70" font-size="12" fill="#c25a2e" transform="rotate(-90 70 70)" font-weight="600">মানুষের কাছাকাছি ▲</text>
+        <text x="70" y="360" font-size="12" fill="#2d6aa8" transform="rotate(-90 70 360)" font-weight="600">▼ তারের কাছাকাছি</text>
+      </svg>
+    </div><figcaption>OSI মডেলের ৭টা স্তর — উপরে অ্যাপ, নিচে হার্ডওয়্যার</figcaption></figure>
+
+    <div class="box note"><span class="tag">🧵 মনে রাখার কৌশল</span>
+    উপর থেকে নিচ — <strong>A</strong>ll <strong>P</strong>eople <strong>S</strong>eem <strong>T</strong>o <strong>N</strong>eed <strong>D</strong>ata <strong>P</strong>rocessing (Application, Presentation, Session, Transport, Network, Data Link, Physical)।</div>
+
+    <h3>বাস্তবে যেটা চলে — TCP/IP মডেল</h3>
+    <p>OSI শেখার জন্য ভালো, কিন্তু আসল ইন্টারনেট চলে <strong>TCP/IP মডেলে</strong> — যেটা OSI-এর সরলীকৃত ৪-স্তরের রূপ।</p>
+
+    <table>
+      <tr><th>TCP/IP স্তর</th><th>OSI-এর সমতুল্য</th><th>উদাহরণ</th></tr>
+      <tr><td>Application</td><td>স্তর ৫,৬,৭</td><td>HTTP, DNS</td></tr>
+      <tr><td>Transport</td><td>স্তর ৪</td><td>TCP, UDP</td></tr>
+      <tr><td>Internet</td><td>স্তর ৩</td><td>IP</td></tr>
+      <tr><td>Network Access</td><td>স্তর ১,২</td><td>Ethernet, Wi-Fi</td></tr>
+    </table>
+
+    <div class="quiz"><span class="tag">🧠 নিজেকে যাচাই করুন</span>
+    <details><summary>রাউটার OSI-এর কোন স্তরে কাজ করে?</summary><p>স্তর ৩ (Network) — কারণ রাউটার IP অ্যাড্রেস দেখে পথ ঠিক করে।</p></details>
+    <details><summary>Wi-Fi তরঙ্গ বা কেবলের তার কোন স্তর?</summary><p>স্তর ১ (Physical) — যেখানে আসল সিগন্যাল যাতায়াত করে।</p></details>
+    </div>
+  </section>
+
+  <!-- ============ CH4 ============ -->
+  <section class="chapter" id="ch4">
+    <div class="ch-head">
+      <span class="ch-num">০৪</span>
+      <div><h2>ডেটা আসলে কীভাবে যায়?</h2><div class="ch-sub">packets-and-flow</div></div>
+    </div>
+
+    <p class="lead">তথ্য একসাথে বড় একটা গোছা হয়ে যায় না। এটা ছোট ছোট <strong>প্যাকেটে</strong> (packet) ভাগ হয়ে যায়, আলাদা আলাদা পথে যেতে পারে, আর গন্তব্যে গিয়ে আবার জোড়া লাগে।</p>
+
+    <div class="box analogy"><span class="tag">🧩 উপমা — জিগস পাজল ডাকে পাঠানো</span>
+    একটা বড় ছবি একবারে খামে ভরা যায় না। তাই আপনি ছবিটা টুকরো টুকরো করে প্রতিটা টুকরোর পেছনে নম্বর লিখে আলাদা খামে পাঠালেন। টুকরোগুলো ভিন্ন পথে, ভিন্ন সময়ে পৌঁছাতে পারে — কিন্তু নম্বর দেখে গ্রাহক আবার পুরো ছবি জোড়া লাগিয়ে ফেলবে। প্যাকেটও ঠিক তাই।</div>
+
+    <h3>একটা প্যাকেটে কী কী থাকে?</h3>
+    <p>প্রতিটা প্যাকেটে দুই ধরনের জিনিস থাকে — আসল <strong>ডেটা</strong> (payload), আর ডেটা সম্পর্কে তথ্য (<strong>header</strong>) — যেমন কোথা থেকে এলো, কোথায় যাবে, কত নম্বর টুকরো।</p>
+
+    <figure><div class="diagram">
+      <svg viewBox="0 0 620 150" xmlns="http://www.w3.org/2000/svg" font-family="Hind Siliguri, sans-serif">
+        <rect x="60" y="45" width="120" height="60" rx="6" fill="#eaf3f0" stroke="#1a6b5a"/>
+        <text x="120" y="70" text-anchor="middle" font-size="12" font-weight="600" fill="#1a6b5a">উৎস IP</text>
+        <text x="120" y="90" text-anchor="middle" font-size="11" fill="#6b6355">কোথা থেকে</text>
+        <rect x="180" y="45" width="120" height="60" rx="6" fill="#eaf3f0" stroke="#1a6b5a"/>
+        <text x="240" y="70" text-anchor="middle" font-size="12" font-weight="600" fill="#1a6b5a">গন্তব্য IP</text>
+        <text x="240" y="90" text-anchor="middle" font-size="11" fill="#6b6355">কোথায় যাবে</text>
+        <rect x="300" y="45" width="90" height="60" rx="6" fill="#fff6e9" stroke="#c25a2e"/>
+        <text x="345" y="70" text-anchor="middle" font-size="12" font-weight="600" fill="#c25a2e">নম্বর</text>
+        <text x="345" y="90" text-anchor="middle" font-size="11" fill="#6b6355">#৩/১০</text>
+        <rect x="390" y="45" width="170" height="60" rx="6" fill="#c25a2e"/>
+        <text x="475" y="70" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">আসল ডেটা</text>
+        <text x="475" y="90" text-anchor="middle" font-size="11" fill="#ffe">payload</text>
+        <text x="230" y="30" text-anchor="middle" font-size="12" fill="#1a6b5a">◀──── Header (খামের গায়ে লেখা) ────▶</text>
+        <text x="475" y="130" text-anchor="middle" font-size="12" fill="#c25a2e">খামের ভেতরের চিঠি</text>
+      </svg>
+    </div><figcaption>একটা প্যাকেটের সরলীকৃত গঠন — header + payload</figcaption></figure>
+
+    <h3>TCP বনাম UDP — দুই ধরনের পাঠানোর ধরন</h3>
+    <p>তথ্য পাঠানোর দুটো প্রধান পদ্ধতি আছে। একটা নির্ভরযোগ্য কিন্তু ধীর, আরেকটা দ্রুত কিন্তু কিছু টুকরো হারালেও পরোয়া করে না।</p>
+
+    <table>
+      <tr><th></th><th>TCP</th><th>UDP</th></tr>
+      <tr><td>স্বভাব</td><td>নিশ্চিত করে পৌঁছেছে</td><td>পাঠিয়ে দিয়ে ভুলে যায়</td></tr>
+      <tr><td>গতি</td><td>তুলনামূলক ধীর</td><td>দ্রুত</td></tr>
+      <tr><td>হারানো টুকরো</td><td>আবার পাঠায়</td><td>পাঠায় না</td></tr>
+      <tr><td>কোথায়</td><td>ওয়েবসাইট, ইমেইল, ফাইল</td><td>লাইভ ভিডিও, গেম, কল</td></tr>
+    </table>
+
+    <div class="box analogy"><span class="tag">📞 উপমা</span>
+    <strong>TCP</strong> = রেজিস্ট্রি ডাক — প্রাপক সই করে বুঝিয়ে দেয় পেয়েছে। <strong>UDP</strong> = রেডিও সম্প্রচার — শুনতে পেলে ভালো, না পেলে পরের কথা এসে যাবে, ফিরে চাওয়ার সময় নেই। তাই লাইভ ভিডিওতে UDP — একটা ফ্রেম হারালেও পরেরটা চলে আসে, থেমে থাকার দরকার নেই।</div>
+
+    <h3>পুরো যাত্রা — এক নজরে</h3>
+    <figure><div class="diagram">
+      <svg viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg" font-family="Hind Siliguri, sans-serif">
+        <defs><marker id="ar2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#c25a2e"/></marker></defs>
+        <rect x="20" y="80" width="90" height="55" rx="8" fill="#eaf3f0" stroke="#1a6b5a"/>
+        <text x="65" y="105" text-anchor="middle" font-size="13" font-weight="600">আপনার</text>
+        <text x="65" y="122" text-anchor="middle" font-size="13" font-weight="600">ফোন</text>
+
+        <rect x="160" y="80" width="90" height="55" rx="8" fill="#fff" stroke="#6b6355"/>
+        <text x="205" y="112" text-anchor="middle" font-size="13">রাউটার</text>
+
+        <ellipse cx="360" cy="107" rx="70" ry="45" fill="#fdeee6" stroke="#c25a2e" stroke-dasharray="5 3"/>
+        <text x="360" y="112" text-anchor="middle" font-size="13" font-weight="600" fill="#c25a2e">ইন্টারনেট</text>
+
+        <rect x="480" y="80" width="90" height="55" rx="8" fill="#eaf3f0" stroke="#1a6b5a"/>
+        <text x="525" y="105" text-anchor="middle" font-size="13" font-weight="600">সার্ভার</text>
+        <text x="525" y="122" text-anchor="middle" font-size="12" fill="#6b6355">(ইউটিউব)</text>
+
+        <line x1="112" y1="107" x2="156" y2="107" stroke="#c25a2e" stroke-width="2" marker-end="url(#ar2)"/>
+        <line x1="252" y1="107" x2="288" y2="107" stroke="#c25a2e" stroke-width="2" marker-end="url(#ar2)"/>
+        <line x1="432" y1="107" x2="476" y2="107" stroke="#c25a2e" stroke-width="2" marker-end="url(#ar2)"/>
+
+        <text x="320" y="40" text-anchor="middle" font-size="13" fill="#1a6b5a" font-weight="600">"ভিডিওটা পাঠাও" (request) ─────▶</text>
+        <text x="320" y="185" text-anchor="middle" font-size="13" fill="#c25a2e" font-weight="600">◀───── ভিডিও প্যাকেট (response)</text>
+      </svg>
+    </div><figcaption>আপনি একটা ভিডিও দেখলে যা যা ঘটে — অনুরোধ যায়, উত্তর ফিরে আসে</figcaption></figure>
+  </section>
+
+  <!-- ============ CH5 ============ -->
+  <section class="chapter" id="ch5">
+    <div class="ch-head">
+      <span class="ch-num">০৫</span>
+      <div><h2>যন্ত্রপাতি — রাউটার, সুইচ, আরও</h2><div class="ch-sub">devices</div></div>
+    </div>
+
+    <p class="lead">নেটওয়ার্ক শুধু তার আর কম্পিউটার নয় — মাঝে কিছু বুদ্ধিমান যন্ত্র থাকে যারা ট্রাফিক পরিচালনা করে। প্রধান তিনটা: <strong>সুইচ, রাউটার, মডেম</strong>।</p>
+
+    <h3>সুইচ (Switch) — পাড়ার ভেতরের ডাকপিয়ন</h3>
+    <p>একটা সুইচ একই নেটওয়ার্কের (LAN) ডিভাইসগুলোকে যুক্ত করে। এটা <strong>MAC অ্যাড্রেস</strong> দেখে ঠিক করে কোন ডিভাইসে ডেটা পাঠাতে হবে। MAC অ্যাড্রেস হলো প্রতিটা নেটওয়ার্ক কার্ডের স্থায়ী পরিচয় (যেমন <code>A4:B1:C2:D3:E4:F5</code>) — জন্ম থেকেই থাকে, বদলায় না।</p>
+
+    <h3>রাউটার (Router) — শহরের মধ্যে পথপ্রদর্শক</h3>
+    <p>রাউটার আলাদা আলাদা নেটওয়ার্ককে যুক্ত করে — যেমন আপনার বাসাকে ইন্টারনেটের সাথে। এটা <strong>IP অ্যাড্রেস</strong> দেখে সিদ্ধান্ত নেয় প্যাকেট কোন দিকে পাঠাবে।</p>
+
+    <div class="box analogy"><span class="tag">🚦 উপমা — ট্রাফিক ব্যবস্থা</span>
+    <strong>সুইচ</strong> = পাড়ার ভেতরের গলি — শুধু কাছের বাড়িগুলোতে চিঠি বিলি করে। <strong>রাউটার</strong> = হাইওয়ের মোড় — সিদ্ধান্ত নেয় "এই গাড়িটা ঢাকা যাবে না চট্টগ্রাম"। দুটোর কাজ আলাদা, কিন্তু একসাথে মিলেই পুরো যাত্রা সম্পূর্ণ হয়।</div>
+
+    <figure><div class="diagram">
+      <svg viewBox="0 0 640 300" xmlns="http://www.w3.org/2000/svg" font-family="Hind Siliguri, sans-serif">
+        <!-- internet -->
+        <ellipse cx="320" cy="40" rx="80" ry="30" fill="#fdeee6" stroke="#c25a2e" stroke-dasharray="5 3"/>
+        <text x="320" y="45" text-anchor="middle" font-size="13" font-weight="600" fill="#c25a2e">ইন্টারনেট</text>
+        <!-- modem -->
+        <rect x="270" y="90" width="100" height="34" rx="6" fill="#e8eef2" stroke="#2d6aa8"/>
+        <text x="320" y="112" text-anchor="middle" font-size="12" font-weight="600" fill="#2d6aa8">মডেম</text>
+        <line x1="320" y1="70" x2="320" y2="90" stroke="#c25a2e" stroke-width="2"/>
+        <!-- router -->
+        <rect x="270" y="140" width="100" height="34" rx="6" fill="#eaf3f0" stroke="#1a6b5a"/>
+        <text x="320" y="162" text-anchor="middle" font-size="12" font-weight="600" fill="#1a6b5a">রাউটার</text>
+        <line x1="320" y1="124" x2="320" y2="140" stroke="#2b7a6a" stroke-width="2"/>
+        <!-- switch -->
+        <rect x="270" y="190" width="100" height="34" rx="6" fill="#eef3ea" stroke="#5a8a3a"/>
+        <text x="320" y="212" text-anchor="middle" font-size="12" font-weight="600" fill="#5a8a3a">সুইচ</text>
+        <line x1="320" y1="174" x2="320" y2="190" stroke="#2b7a6a" stroke-width="2"/>
+        <!-- devices -->
+        <g font-size="11" text-anchor="middle">
+          <rect x="150" y="255" width="80" height="34" rx="6" fill="#fff" stroke="#6b6355"/><text x="190" y="277">ল্যাপটপ</text>
+          <rect x="280" y="255" width="80" height="34" rx="6" fill="#fff" stroke="#6b6355"/><text x="320" y="277">ডেস্কটপ</text>
+          <rect x="410" y="255" width="80" height="34" rx="6" fill="#fff" stroke="#6b6355"/><text x="450" y="277">প্রিন্টার</text>
+        </g>
+        <line x1="320" y1="224" x2="190" y2="255" stroke="#5a8a3a" stroke-width="1.5"/>
+        <line x1="320" y1="224" x2="320" y2="255" stroke="#5a8a3a" stroke-width="1.5"/>
+        <line x1="320" y1="224" x2="450" y2="255" stroke="#5a8a3a" stroke-width="1.5"/>
+      </svg>
+    </div><figcaption>বাসার সাধারণ সেটআপ — ইন্টারনেট → মডেম → রাউটার → সুইচ → ডিভাইস</figcaption></figure>
+
+    <div class="box note"><span class="tag">💡 বাস্তবতা</span>
+    বাসায় আপনি যে "রাউটার" ব্যবহার করেন, সেটা আসলে একসাথে তিনটা যন্ত্র — মডেম + রাউটার + সুইচ + Wi-Fi অ্যাক্সেস পয়েন্ট, সব এক বাক্সে। তাই এত সহজে চলে।</div>
+
+    <table>
+      <tr><th>যন্ত্র</th><th>কী দেখে</th><th>কাজ</th><th>OSI স্তর</th></tr>
+      <tr><td>সুইচ</td><td>MAC অ্যাড্রেস</td><td>একই LAN-এ বিলি</td><td>২</td></tr>
+      <tr><td>রাউটার</td><td>IP অ্যাড্রেস</td><td>নেটওয়ার্কে-নেটওয়ার্কে পথ</td><td>৩</td></tr>
+      <tr><td>মডেম</td><td>সিগন্যাল</td><td>ডিজিটাল↔অ্যানালগ রূপান্তর</td><td>১</td></tr>
+    </table>
+
+    <div class="quiz"><span class="tag">🧠 নিজেকে যাচাই করুন</span>
+    <details><summary>MAC আর IP অ্যাড্রেসের মূল পার্থক্য কী?</summary><p>MAC স্থায়ী ও যন্ত্রের সাথে জন্মায় (বদলায় না), আর সুইচ এটা ব্যবহার করে। IP পরিবর্তনশীল, নেটওয়ার্ক অনুযায়ী বদলায়, আর রাউটার এটা ব্যবহার করে।</p></details>
+    </div>
+  </section>
+
+  <!-- ============ CH6 ============ -->
+  <section class="chapter" id="ch6">
+    <div class="ch-head">
+      <span class="ch-num">০৬</span>
+      <div><h2>DNS, DHCP, NAT — নেপথ্যের নায়ক</h2><div class="ch-sub">core-services</div></div>
+    </div>
+
+    <p class="lead">তিনটা সেবা প্রতিদিন নিঃশব্দে কাজ করে যায়, অথচ ছাড়া ইন্টারনেট অচল। নাম মনে রাখুন — <strong>DNS</strong>, <strong>DHCP</strong>, <strong>NAT</strong>।</p>
+
+    <h3>DNS — ইন্টারনেটের ফোনবুক</h3>
+    <p>আপনি <code>google.com</code> মনে রাখতে পারেন, কিন্তু কম্পিউটার শুধু সংখ্যা বোঝে (<code>142.250.190.78</code>)। <strong>DNS</strong> (Domain Name System) নামটাকে সংখ্যায় অনুবাদ করে দেয়।</p>
+
+    <div class="box analogy"><span class="tag">📖 উপমা — মোবাইলের কন্ট্যাক্ট লিস্ট</span>
+    আপনি "মা"-কে কল করেন, নম্বর মুখস্থ রাখেন না। ফোন কন্ট্যাক্ট থেকে নম্বরটা খুঁজে নেয়। DNS হলো ইন্টারনেটের বিশাল কন্ট্যাক্ট লিস্ট — নাম দিলে নম্বর (IP) বের করে দেয়।</div>
+
+    <figure><div class="diagram">
+      <svg viewBox="0 0 640 170" xmlns="http://www.w3.org/2000/svg" font-family="Hind Siliguri, sans-serif">
+        <defs><marker id="ar3" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#1a6b5a"/></marker></defs>
+        <rect x="30" y="60" width="120" height="50" rx="8" fill="#eaf3f0" stroke="#1a6b5a"/>
+        <text x="90" y="82" text-anchor="middle" font-size="12" font-weight="600">আপনি</text>
+        <text x="90" y="99" text-anchor="middle" font-size="11" fill="#6b6355">"google.com?"</text>
+
+        <rect x="260" y="60" width="120" height="50" rx="8" fill="#fff6e9" stroke="#c25a2e"/>
+        <text x="320" y="82" text-anchor="middle" font-size="12" font-weight="600" fill="#c25a2e">DNS সার্ভার</text>
+        <text x="320" y="99" text-anchor="middle" font-size="11" fill="#6b6355">ফোনবুক</text>
+
+        <rect x="490" y="60" width="120" height="50" rx="8" fill="#eaf3f0" stroke="#1a6b5a"/>
+        <text x="550" y="82" text-anchor="middle" font-size="12" font-weight="600">গুগল সার্ভার</text>
+        <text x="550" y="99" text-anchor="middle" font-size="11" fill="#6b6355">142.250.190.78</text>
+
+        <line x1="152" y1="78" x2="256" y2="78" stroke="#1a6b5a" stroke-width="2" marker-end="url(#ar3)"/>
+        <text x="204" y="70" text-anchor="middle" font-size="10" fill="#1a6b5a">নাম জিজ্ঞাসা</text>
+        <line x1="256" y1="98" x2="152" y2="98" stroke="#1a6b5a" stroke-width="2" marker-end="url(#ar3)"/>
+        <text x="204" y="118" text-anchor="middle" font-size="10" fill="#1a6b5a">IP উত্তর</text>
+        <line x1="382" y1="85" x2="486" y2="85" stroke="#c25a2e" stroke-width="2" marker-end="url(#ar3)"/>
+        <text x="434" y="77" text-anchor="middle" font-size="10" fill="#c25a2e">এখন সংযোগ</text>
+      </svg>
+    </div><figcaption>DNS কীভাবে নামকে IP-তে অনুবাদ করে, তারপর আসল সংযোগ হয়</figcaption></figure>
+
+    <h3>DHCP — স্বয়ংক্রিয় ঠিকানা বিতরণ</h3>
+    <p>নতুন ফোন Wi-Fi-তে যুক্ত হলে সাথে সাথে একটা IP পেয়ে যায় — আপনাকে হাতে বসাতে হয় না। এই স্বয়ংক্রিয় বিতরণ করে <strong>DHCP</strong> (Dynamic Host Configuration Protocol)।</p>
+
+    <div class="box analogy"><span class="tag">🎟️ উপমা — অনুষ্ঠানে টোকেন</span>
+    বিয়ের অনুষ্ঠানে ঢুকলে গেটে একটা টোকেন নম্বর ধরিয়ে দেয়। আপনাকে নিজের নম্বর বাছতে হয় না, ডুপ্লিকেটও হয় না। DHCP তেমনি প্রতিটা নতুন ডিভাইসকে একটা করে অব্যবহৃত IP দিয়ে দেয়।</div>
+
+    <h3>NAT — একটা ঠিকানায় অনেকজন</h3>
+    <p>আপনার বাসায় ১০টা ডিভাইস, অথচ ISP দিয়েছে একটাই পাবলিক IP। কীভাবে সবাই ইন্টারনেট চালায়? <strong>NAT</strong> (Network Address Translation) সব প্রাইভেট IP-কে একটা পাবলিক IP-এর আড়ালে অনুবাদ করে দেয়।</p>
+
+    <div class="box analogy"><span class="tag">🏨 উপমা — হোটেলের রিসেপশন</span>
+    হোটেলের বাইরের নম্বর একটাই। রুম ৩০৫ থেকে কেউ বাইরে ফোন করলে, রিসেপশন মূল নম্বর দিয়ে কল করে আর মনে রাখে "উত্তরটা ৩০৫-এ পাঠাতে হবে"। NAT ঠিক এই অনুবাদ ও হিসাব রাখার কাজটা করে।</div>
+
+    <div class="quiz"><span class="tag">🧠 নিজেকে যাচাই করুন</span>
+    <details><summary>ব্রাউজারে সাইট খুলছে না কিন্তু IP দিলে খুলছে — সমস্যা কোথায়?</summary><p>সম্ভবত DNS-এ সমস্যা। নাম থেকে IP অনুবাদ হচ্ছে না, তাই সরাসরি IP কাজ করছে।</p></details>
+    <details><summary>নতুন ফোন Wi-Fi-তে IP পায় কার কল্যাণে?</summary><p>DHCP — এটা স্বয়ংক্রিয়ভাবে একটা IP বরাদ্দ করে দেয়।</p></details>
+    </div>
+  </section>
+
+  <!-- ============ CH7 ============ -->
+  <section class="chapter" id="ch7">
+    <div class="ch-head">
+      <span class="ch-num">০৭</span>
+      <div><h2>প্র্যাকটিক্যাল — কমান্ড দিয়ে দেখা</h2><div class="ch-sub">hands-on</div></div>
+    </div>
+
+    <p class="lead">এবার হাতে-কলমে। এই কমান্ডগুলো আপনার নিজের কম্পিউটারেই চালাতে পারবেন — Windows-এ <strong>Command Prompt</strong>, Mac/Linux-এ <strong>Terminal</strong> খুলুন।</p>
+
+    <div class="box warn"><span class="tag">⚠️ ভয় পাবেন না</span>
+    এই কমান্ডগুলো শুধু <strong>তথ্য দেখায়</strong>, কিছু নষ্ট করে না। নির্ভয়ে চালান আর আউটপুট মিলিয়ে দেখুন।</div>
+
+    <h3>১. নিজের IP জানা</h3>
+    <pre><span class="c"># Windows</span>
+<span class="k">ipconfig</span>
+
+<span class="c"># Mac / Linux</span>
+<span class="k">ifconfig</span>   <span class="c"># অথবা</span>
+<span class="k">ip addr</span></pre>
+    <p>আউটপুটে <code>IPv4 Address</code> বা <code>inet</code>-এর পাশে যে সংখ্যাটা দেখবেন (যেমন <code>192.168.0.105</code>) — সেটাই এই মুহূর্তে আপনার ডিভাইসের ঠিকানা।</p>
+
+    <h3>২. অন্য ডিভাইস জীবিত কিনা — ping</h3>
+    <p><code>ping</code> একটা ছোট প্যাকেট পাঠিয়ে দেখে উত্তর আসে কিনা — অনেকটা "হ্যালো, শুনতে পাচ্ছো?" বলে ডাক দেওয়ার মতো।</p>
+    <pre><span class="k">ping</span> google.com</pre>
+    <pre><span class="c"># সম্ভাব্য আউটপুট</span>
+Reply from 142.250.190.78: bytes=32 <span class="o">time=24ms</span> TTL=115
+Reply from 142.250.190.78: bytes=32 <span class="o">time=22ms</span> TTL=115</pre>
+    <p>এখানে <code>time=24ms</code> মানে উত্তর আসতে ২৪ মিলিসেকেন্ড লেগেছে — যত কম, তত দ্রুত সংযোগ। উত্তর না এলে হয় ইন্টারনেট নেই, নয়তো ঐ সার্ভার সাড়া দিচ্ছে না।</p>
+
+    <h3>৩. পথ দেখা — traceroute</h3>
+    <p>আপনার প্যাকেট গন্তব্যে পৌঁছাতে কোন কোন রাউটারের হাত ঘোরে, সেটা দেখায়:</p>
+    <pre><span class="c"># Windows</span>
+<span class="k">tracert</span> google.com
+
+<span class="c"># Mac / Linux</span>
+<span class="k">traceroute</span> google.com</pre>
+    <p>প্রতিটা লাইন একটা "হপ" (hop) — অর্থাৎ পথের একটা রাউটার। এভাবে বোঝা যায় ধীরগতির সমস্যা কোন জায়গায়।</p>
+
+    <h3>৪. নাম-থেকে-IP দেখা — nslookup</h3>
+    <pre><span class="k">nslookup</span> google.com</pre>
+    <p>এটা DNS-কে জিজ্ঞেস করে <code>google.com</code>-এর IP কত — অধ্যায় ৬-এর DNS জিনিসটা নিজ চোখে দেখা।</p>
+
+    <div class="box note"><span class="tag">🔧 সমস্যা সমাধানের ধাপ (troubleshooting)</span>
+    ইন্টারনেট কাজ না করলে ধাপে ধাপে দেখুন:
+    <ol style="margin:8px 0 0">
+      <li><code>ping 127.0.0.1</code> — নিজের কার্ড ঠিক আছে?</li>
+      <li><code>ping</code> রাউটারের IP — বাসার সংযোগ ঠিক আছে?</li>
+      <li><code>ping 8.8.8.8</code> — ইন্টারনেট পৌঁছাচ্ছে? (Google-এর DNS)</li>
+      <li><code>ping google.com</code> — DNS কাজ করছে? (৩ কাজ করে কিন্তু ৪ না করলে DNS সমস্যা)</li>
+    </ol></div>
+
+    <table>
+      <tr><th>কমান্ড</th><th>কী দেখায়</th></tr>
+      <tr><td><code>ipconfig</code> / <code>ip addr</code></td><td>নিজের IP</td></tr>
+      <tr><td><code>ping</code></td><td>সংযোগ আছে কিনা + গতি</td></tr>
+      <tr><td><code>tracert</code> / <code>traceroute</code></td><td>প্যাকেটের পথ</td></tr>
+      <tr><td><code>nslookup</code></td><td>নাম → IP অনুবাদ</td></tr>
+    </table>
+  </section>
+
+  <!-- ============ CH8 ============ -->
+  <section class="chapter" id="ch8">
+    <div class="ch-head">
+      <span class="ch-num">০৮</span>
+      <div><h2>সাবনেটিং — হাতে-কলমে</h2><div class="ch-sub">subnetting</div></div>
+    </div>
+
+    <p class="lead"><strong>সাবনেটিং</strong> মানে একটা বড় নেটওয়ার্ককে ছোট ছোট ভাগে ভাগ করা — যাতে ব্যবস্থাপনা সহজ হয় আর নিরাপত্তা বাড়ে। এটা একটু গণিত, কিন্তু ধাপে ধাপে দেখলে সহজ।</p>
+
+    <div class="box analogy"><span class="tag">🏢 উপমা — বড় অফিসকে বিভাগে ভাগ</span>
+    একটা বিশাল অফিসে সবাই একঘরে বসলে হট্টগোল। তাই আলাদা বিভাগ — HR রুম, IT রুম, হিসাব রুম। প্রতিটা রুমের নির্দিষ্ট সংখ্যক ডেস্ক। সাবনেটিং ঠিক এভাবে বড় নেটওয়ার্ককে ছোট, গোছানো অংশে ভাগ করে।</div>
+
+    <h3>সাবনেট মাস্ক কী?</h3>
+    <p>মনে আছে, IP-এর কিছু অংশ "পাড়া" আর কিছু অংশ "বাড়ি" চেনায়? <strong>সাবনেট মাস্ক</strong> ঠিক এই সীমারেখাটা টেনে দেয় — কোন অংশ পর্যন্ত নেটওয়ার্ক, আর কোথা থেকে হোস্ট শুরু।</p>
+
+    <figure><div class="diagram">
+      <svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg" font-family="JetBrains Mono, monospace">
+        <text x="320" y="35" text-anchor="middle" font-size="14" font-family="Hind Siliguri" font-weight="600">IP:  192.168.1.10   মাস্ক: 255.255.255.0  (/24)</text>
+        <!-- network part -->
+        <rect x="80" y="70" width="330" height="50" rx="6" fill="#eaf3f0" stroke="#1a6b5a"/>
+        <text x="245" y="100" text-anchor="middle" font-size="18" font-weight="600" fill="#1a6b5a">192.168.1</text>
+        <!-- host part -->
+        <rect x="410" y="70" width="150" height="50" rx="6" fill="#fdeee6" stroke="#c25a2e"/>
+        <text x="485" y="100" text-anchor="middle" font-size="18" font-weight="600" fill="#c25a2e">.10</text>
+        <text x="245" y="150" text-anchor="middle" font-size="13" fill="#1a6b5a" font-family="Hind Siliguri">নেটওয়ার্ক (স্থির)</text>
+        <text x="485" y="150" text-anchor="middle" font-size="13" fill="#c25a2e" font-family="Hind Siliguri">হোস্ট (১–২৫৪)</text>
+        <text x="320" y="180" text-anchor="middle" font-size="12" fill="#6b6355" font-family="Hind Siliguri">/24 মানে প্রথম ২৪ বিট = নেটওয়ার্ক, বাকি ৮ বিট = হোস্ট</text>
+      </svg>
+    </div><figcaption>সাবনেট মাস্ক IP-কে দুই ভাগে ভাগ করে দেখায় — কোনটা নেটওয়ার্ক, কোনটা হোস্ট</figcaption></figure>
+
+    <h3>CIDR নোটেশন — /24 মানে কী?</h3>
+    <p>মাস্ক লেখার সংক্ষিপ্ত রূপ হলো CIDR। <code>/24</code> মানে প্রথম ২৪টা বিট নেটওয়ার্কের জন্য। বাকি ৮ বিট হোস্টের জন্য, তাই <strong>২⁸ − ২ = ২৫৪</strong>টা ডিভাইস বসানো যায় (২টা বাদ যায় — একটা নেটওয়ার্ক অ্যাড্রেস, একটা ব্রডকাস্ট)।</p>
+
+    <table>
+      <tr><th>CIDR</th><th>সাবনেট মাস্ক</th><th>ব্যবহারযোগ্য হোস্ট</th><th>কোথায়</th></tr>
+      <tr><td><code>/24</code></td><td>255.255.255.0</td><td>২৫৪</td><td>সাধারণ বাসা/অফিস</td></tr>
+      <tr><td><code>/25</code></td><td>255.255.255.128</td><td>১২৬</td><td>ছোট বিভাগ</td></tr>
+      <tr><td><code>/26</code></td><td>255.255.255.192</td><td>৬২</td><td>ছোট দল</td></tr>
+      <tr><td><code>/30</code></td><td>255.255.255.252</td><td>২</td><td>দুই রাউটারের লিংক</td></tr>
+    </table>
+
+    <h3>একটা বাস্তব উদাহরণ</h3>
+    <div class="box note"><span class="tag">✏️ ধরুন</span>
+    আপনার নেটওয়ার্ক <code>192.168.1.0/24</code>। এখানে —
+    <ul style="margin:8px 0 0">
+      <li><strong>নেটওয়ার্ক অ্যাড্রেস:</strong> <code>192.168.1.0</code> (পুরো পাড়ার নাম, কোনো বাড়ি নয়)</li>
+      <li><strong>প্রথম ব্যবহারযোগ্য:</strong> <code>192.168.1.1</code> (সাধারণত রাউটার)</li>
+      <li><strong>শেষ ব্যবহারযোগ্য:</strong> <code>192.168.1.254</code></li>
+      <li><strong>ব্রডকাস্ট অ্যাড্রেস:</strong> <code>192.168.1.255</code> (সবাইকে একসাথে ডাকার ঠিকানা)</li>
+    </ul></div>
+
+    <div class="quiz"><span class="tag">🧠 নিজেকে যাচাই করুন</span>
+    <details><summary><code>/24</code> নেটওয়ার্কে কতগুলো ডিভাইস বসানো যায়?</summary><p>২৫৪টা। ৮ বিট হোস্ট = ২৫৬টা ঠিকানা, তার থেকে ২টা (নেটওয়ার্ক ও ব্রডকাস্ট) বাদ।</p></details>
+    <details><summary>দুটো রাউটার জোড়ার লিংকে সবচেয়ে ছোট কোন সাবনেট মানানসই?</summary><p><code>/30</code> — এতে ঠিক ২টা ব্যবহারযোগ্য ঠিকানা, দুই রাউটারের জন্য যথেষ্ট, ঠিকানা নষ্ট হয় না।</p></details>
+    </div>
+
+    <div class="box analogy" style="margin-top:40px;text-align:center;background:#eaf3f0;border-color:#1a6b5a">
+      <span class="tag" style="color:#1a6b5a">🎓 অভিনন্দন!</span>
+      আপনি একদম শূন্য থেকে শুরু করে নেটওয়ার্ক কী, IP অ্যাড্রেস, OSI মডেল, প্যাকেট, যন্ত্রপাতি, DNS/DHCP/NAT, কমান্ড আর সাবনেটিং — সব পেরিয়ে এসেছেন। এবার নিজের কম্পিউটারে কমান্ডগুলো চালিয়ে দেখুন, আর প্রতিটা অধ্যায় আবার পড়ুন। বারবার অনুশীলনেই দক্ষতা আসে।
+    </div>
+  </section>
+
+</main>
+</div>
+
+<script>
+  // active link on scroll
+  const links = [...document.querySelectorAll('#toc a')];
+  const secs = links.map(a => document.querySelector(a.getAttribute('href')));
+  const onScroll = () => {
+    let idx = 0;
+    secs.forEach((s,i)=>{ if(s.getBoundingClientRect().top <= 120) idx = i; });
+    links.forEach(l=>l.classList.remove('active'));
+    links[idx] && links[idx].classList.add('active');
+  };
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+</script>
+</body>
+</html>
