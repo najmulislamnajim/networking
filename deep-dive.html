@@ -16,14 +16,14 @@
   main{flex:1;max-width:880px;margin:0 auto;padding:52px 52px 130px}
   aside .brand{font-weight:700;font-size:1.05rem;line-height:1.35;color:var(--accent)}
   aside .brand small{display:block;font-weight:400;font-size:.67rem;color:var(--muted);letter-spacing:.13em;text-transform:uppercase;margin-top:7px}
-  aside nav{margin-top:20px}
+  aside nav{margin-top:22px}
   aside nav a{display:block;text-decoration:none;color:var(--ink);padding:6px 11px;border-radius:7px;font-size:.87rem;margin-bottom:1px}
   aside nav a .n{color:var(--accent);font-weight:600;font-family:'JetBrains Mono';font-size:.73rem;margin-right:7px}
   aside nav a .w{float:right;font-size:.7rem;color:var(--accent2);font-weight:600}
   aside nav a:hover{background:var(--paper)}
   aside nav a.active{background:var(--accent);color:#fff}
   aside nav a.active .n,aside nav a.active .w{color:#bcd8ea}
-  aside .modtag{font-size:.67rem;background:var(--accent2);color:#fff;padding:2px 8px;border-radius:20px;letter-spacing:.07em;display:inline-block;margin-top:13px}
+  aside .modtag{font-size:.67rem;background:var(--accent2);color:#fff;padding:2px 8px;border-radius:20px;letter-spacing:.07em;display:inline-block;margin-top:14px}
   .hero{border-bottom:2px solid var(--ink);padding-bottom:30px;margin-bottom:44px}
   .hero .eyebrow{font-family:'JetBrains Mono';font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent2);margin-bottom:15px}
   .hero h1{font-size:2.75rem;line-height:1.1;margin:0 0 15px;font-weight:700;letter-spacing:-.5px}
@@ -70,14 +70,41 @@
   .quiz summary{cursor:pointer;font-weight:500;margin:8px 0}
   .quiz details p{margin:6px 0 0;color:var(--muted);font-size:.92rem}
   .toc-hint{color:var(--muted);font-size:.76rem;margin-top:24px;border-top:1px solid var(--line);padding-top:14px}
-  @media(max-width:900px){aside{display:none}main{padding:28px 20px 90px}.hero h1{font-size:1.9rem}body{font-size:17px}}
+  /* cross-page nav (shared across all course pages) */
+  .home-link{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--muted);font-size:.82rem;font-family:'JetBrains Mono';margin-bottom:14px;transition:color .15s}
+  .home-link:hover{color:var(--accent)}
+  .modswitch{display:flex;flex-direction:column;gap:3px;margin:16px 0 22px;padding:10px;background:var(--paper);border:1px solid var(--line);border-radius:10px}
+  .modswitch .ms-h{font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-family:'JetBrains Mono';padding:2px 8px 6px}
+  .modswitch a{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink);font-size:.83rem;padding:6px 8px;border-radius:6px;transition:background .15s,color .15s}
+  .modswitch a .mn{font-family:'JetBrains Mono';font-size:.72rem;color:var(--muted)}
+  .modswitch a:hover{background:var(--paper2)}
+  .modswitch a.cur{background:var(--accent);color:#fff;font-weight:600}
+  .modswitch a.cur .mn{color:rgba(255,255,255,.8)}
+  .pagenav{display:flex;justify-content:space-between;gap:14px;margin-top:64px;padding-top:28px;border-top:1px solid var(--line);flex-wrap:wrap}
+  .pagenav a{text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:11px;padding:13px 20px;font-size:.92rem;transition:border-color .15s,color .15s,transform .15s;background:#fffdf8;flex:1;min-width:180px}
+  .pagenav a:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+  .pagenav a small{display:block;font-size:.7rem;color:var(--muted);font-family:'JetBrains Mono';margin-bottom:3px;letter-spacing:.05em}
+  .pagenav .nx{text-align:right}
+  .pagefoot{margin-top:30px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;font-size:.83rem;color:var(--muted)}
+  .pagefoot a{color:var(--accent);text-decoration:none;font-weight:600}
+  .pagefoot a:hover{text-decoration:underline}
+  .pagefoot .gh{display:inline-flex;align-items:center;gap:6px}
+  @media(max-width:900px){aside{display:none}main{padding:28px 20px 90px}.hero h1{font-size:1.9rem}body{font-size:17px}.pagenav a{min-width:100%}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <aside>
+  <a href="index.html" class="home-link">← হোমে ফিরুন</a>
   <div class="brand">CCNA 200-301<small>মডিউল ৩ · পরীক্ষা প্রস্তুতি</small></div>
   <span class="modtag">v1.1 BLUEPRINT</span>
+  <div class="modswitch">
+    <div class="ms-h">সব মডিউল</div>
+    <a href="zero.html"><span class="mn">০০</span> শূন্য থেকে</a>
+    <a href="beginner.html"><span class="mn">০১</span> ভিত্তি</a>
+    <a href="intermediate.html"><span class="mn">০২</span> প্রোটোকল</a>
+    <a href="deep-dive.html" class="cur"><span class="mn">০৩</span> CCNA</a>
+  </div>
   <nav id="toc">
     <a href="#ch0"><span class="n">০০</span>পরীক্ষার নকশা</a>
     <a href="#ch1"><span class="n">০১</span>Network Fundamentals<span class="w">20%</span></a>
@@ -790,6 +817,14 @@ Switch# <span class="o">show port-security interface</span> gi0/1</pre>
       শুভকামনা! 🚀
     </div>
   </section>
+  <div class="pagenav">
+    <a href="intermediate.html" class="pv"><small>← আগের মডিউল</small>০২ · প্রোটোকলের ভেতরে</a>
+    <a href="index.html" class="nx"><small>কোর্স শেষ 🎉</small>হোমে ফিরুন</a>
+  </div>
+  <div class="pagefoot">
+    <a href="index.html">← সব কোর্স</a>
+    <a href="https://github.com/najmulislamnajim/networking" target="_blank" rel="noopener" class="gh">GitHub · ভালো লাগলে ★ দিন</a>
+  </div>
 </main>
 </div>
 <script>

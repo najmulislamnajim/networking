@@ -176,6 +176,20 @@
     justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);
   }
 
+  /* ---------- GitHub / author ---------- */
+  .gh-nav{display:inline-flex;align-items:center;gap:7px;background:var(--ink);color:var(--paper)!important;padding:6px 14px;border-radius:20px;font-weight:600}
+  .gh-nav:hover{background:var(--teal);color:#fff!important}
+  .gh-star{
+    display:inline-flex;align-items:center;gap:9px;text-decoration:none;margin-top:18px;
+    background:var(--ink);color:#fff;padding:11px 18px;border-radius:9px;font-size:.9rem;font-weight:600;
+    transition:transform .15s,background .15s;
+  }
+  .gh-star:hover{transform:translateY(-2px);background:var(--teal)}
+  .gh-star .star{color:#f2c14e;font-size:1rem}
+  .foot-author{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .foot-author a{color:var(--teal);text-decoration:none;font-weight:600}
+  .foot-author a:hover{text-decoration:underline}
+
   /* ---------- Responsive ---------- */
   @media(max-width:900px){
     body{font-size:17px}
@@ -218,6 +232,10 @@
       <a href="#path">শেখার পথ</a>
       <a href="#faq">প্রশ্নোত্তর</a>
       <a href="zero.html">শুরু করুন</a>
+      <a href="https://github.com/najmulislamnajim/networking" target="_blank" rel="noopener" class="gh-nav" title="GitHub-এ দেখুন">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
     </nav>
   </div>
 </div>
@@ -516,6 +534,10 @@
       <div class="foot-brand">
         <div class="nm">নেটওয়ার্কিং শেখা</div>
         <p>বাংলাভাষী শিক্ষার্থীদের জন্য নেটওয়ার্কিং শেখার একটি উন্মুক্ত সম্পদ। শূন্য থেকে সার্টিফিকেশন পর্যন্ত।</p>
+        <a href="https://github.com/najmulislamnajim/networking" target="_blank" rel="noopener" class="gh-star">
+          <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          ভালো লাগলে <span class="star">★</span> স্টার দিন
+        </a>
       </div>
       <div class="foot-links">
         <h5>কোর্স</h5>
@@ -530,10 +552,16 @@
         <a href="#path">শেখার পথ</a>
         <a href="#faq">প্রশ্নোত্তর</a>
       </div>
+      <div class="foot-links">
+        <h5>প্রজেক্ট</h5>
+        <a href="https://github.com/najmulislamnajim/networking" target="_blank" rel="noopener">GitHub রিপো</a>
+        <a href="https://github.com/najmulislamnajim/networking/issues" target="_blank" rel="noopener">Issue / পরামর্শ</a>
+        <a href="https://github.com/najmulislamnajim" target="_blank" rel="noopener">নির্মাতা</a>
+      </div>
     </div>
     <div class="foot-bottom">
-      <span>© ২০২৬ · নেটওয়ার্কিং শেখা</span>
-      <span class="mono" style="font-size:.78rem">বাংলায় · সবার জন্য উন্মুক্ত</span>
+      <span class="foot-author">তৈরি করেছেন <a href="https://github.com/najmulislamnajim" target="_blank" rel="noopener">নাজমুল ইসলাম</a> <span class="mono" style="font-size:.76rem;color:var(--muted)">· @najmulislamnajim</span></span>
+      <span class="mono" style="font-size:.78rem">© ২০২৬ · বাংলায় · সবার জন্য উন্মুক্ত</span>
     </div>
   </div>
 </footer>
